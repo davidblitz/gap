@@ -151,7 +151,13 @@ function draw_edges() {
   })
 }
 
+function mouseOnCanvas( mouseX, mouseY) {
+  if(mouseX > -1 && mouseX <= width && mouseY > -1 && mouseY <= height) return true
+  return false
+}
+
 function mouseClicked() {
+  if(!mouseOnCanvas(mouseX, mouseY)) return
   function inVertexNbhd() {
     var inNbhd = false
 
