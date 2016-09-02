@@ -1,0 +1,6 @@
+body>div {
+	position: absolute;
+	left: 600px;
+	width: 600px;
+	height: 800px;
+}

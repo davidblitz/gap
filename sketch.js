@@ -1,4 +1,32 @@
+
+//==EditorTime====================================================
+var div = document.createElement("div");
+var myTextarea = document.createElement("textarea");
+var evalButton = document.createElement("button");
+evalButton.textContent = "Evaluate";
+myTextarea.name = "post";
+myTextarea.maxLength = "500";
+myTextarea.cols = "80";
+myTextarea.rows = "40";
+div.appendChild(myTextarea); //appendChild
+div.appendChild(evalButton)
+document.body.appendChild(div)
+
+  var editor = CodeMirror.fromTextArea(myTextarea, {
+    lineNumbers: true
+  });
+
+
+evalButton.onclick = (function evalFun() {
+  var code = editor.getValue()
+  var result = eval(code)
+  println("Result: " + result)
+})
+
 //--AlgoTime--
+
+var infinity = 100000
+
 function isTree() {
   var N = vertices.length
   var M = edges.length
@@ -34,25 +62,50 @@ function range(start, end) {
 
 function edgeListToAdjacencyList() {
   var N = vertices.length
+
+  var adjacencyList = constArray(N, [])
+
+  edges.forEach(function (e, index, array) {
+    adjacencyList[e[0]].push([e[0], e[1]])
+    adjacencyList[e[1]].push([e[1], e[0]])
+  })
+
+  return adjacencyList
 }
 
 function dijkstra() {
   var N = vertices.length
   var M = edges.length
 
+  var adjacencyList = edgeListToAdjacencyList()
+
   var vertexQueue = range(N)
-  var distances = constArray(N, -1)
-  var previousVertex = Array.apply(0, Array(N)).map(function (_, _) {return -1})
+  var distances = constArray(N, infinity)
+  var previousVertex = constArray(N, -1)
 
   distances[focusIndex] = 0
 
-  /*
-  while(vertexQueue.length > 0) {
 
+  while(vertexQueue.length > 0) {
+    var u = Math.min(distances)
+    var v = distances.indexOf(u)
+    var pos = vertexQueue.indexOf(v)
+    vertexQueue.splice(pos, 1)
+
+    adjacencyList[v].forEach(function (e, index, array) {
+      var alt = distances[v] + 1
+      if(alt < distances[e[1]]) {
+        distances[e[1]] = alt
+        previousVertex[e[1]] = v
+      }
+    })
+
+    return [distances, previous]
   }
-  */
+
   console.log(distances.toString())
 }
+
 //--UITime--
 
 var printTupleArr = function () {
@@ -65,6 +118,7 @@ var printTupleArr = function () {
 
   arrString += "]"
   println(arrString)
+  return arrString
 }
 
 //var vertices = [[70, 120], [50, 50]]
@@ -125,11 +179,23 @@ function mouseClicked() {
   }
 
   //printData()
-  println("=====================================")
-  vertices.print()
-  edges.print()
-  println("isTree() = " + isTree())
-  dijkstra()
+  console.log("=====================================")
+  vertString = vertices.print()
+  edgeString = edges.print()
+  editString = "var " + vertString + "\n" + "var " + edgeString + "\n"
+  editor.setValue(editString)
+  var treeBool = isTree()
+  println("isTree() = " + treeBool)
+  if(treeBool) {
+    ret = dijkstra()
+    distances = ret[0]
+    previous = ret[1]
+    outString = "Distances: \n"
+    distances.forEach(function (d, ind, array) {
+      outString += ind + ":" +  d
+      if(ind != array.length-1) outString += ", "
+    })
+  }
   return false
 }
 
