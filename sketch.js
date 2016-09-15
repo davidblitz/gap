@@ -106,7 +106,7 @@ function dijkstra() {
   console.log(distances.toString())
 }
 
-//--UITime--
+//--CanvasTime-------------------------------------------------
 
 var printTupleArr = function () {
   arrString = this.name + " = ["
@@ -170,7 +170,8 @@ function mouseClicked() {
         edges.forEach(function (e, index, array) {
           if(e[0] == v1 && e[1] == v2) inEdges = true
         })
-        if(!inEdges) edges.push([v1, v2])
+
+        if(!inEdges && v1 != v2) edges.push([v1, v2])
 
         focusIndex = index
         inNbhd = true
@@ -186,10 +187,12 @@ function mouseClicked() {
 
   //printData()
   console.log("=====================================")
-  vertString = vertices.print()
-  edgeString = edges.print()
-  editString = "var " + vertString + "\n" + "var " + edgeString + "\n"
-  editor.setValue(editString)
+  var editorContent = editor.getValue()
+  var splitContent  = editorContent.split('\n')
+  splitContent[0] = "var " + vertices.print()
+  splitContent[1] = "var " + edges.print()
+  var newEditorContent = splitContent.join("\n")
+  editor.setValue(newEditorContent)
   var treeBool = isTree()
   println("isTree() = " + treeBool)
   if(treeBool) {
