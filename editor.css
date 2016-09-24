@@ -25,3 +25,14 @@ input[type=eval], input[type=save], input[type=load], .custom-file-upload {
     cursor: pointer;
 		width: 20%;
 }
+
+.output {
+	background: #f4faff;
+	border: 0;
+	border-radius: 2px;
+	padding:20px;
+}
+
+.output > code {
+	color: green
+}
