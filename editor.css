@@ -1,6 +1,27 @@
-body>div {
-	position: absolute;
+#canvas {
+	position: fixed;
+	left: 0px
+}
+#righthalf {
+	position: fixed;
+	top: 0px;
 	left: 600px;
-	width: 600px;
-	height: 800px;
+	width: 50%;
+	height: 50%;
+}
+
+input[type=file] {
+	display: none;
+}
+
+input[type=eval], input[type=save], input[type=load], .custom-file-upload {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 12px 30px;
+    text-decoration: none;
+		font-family: sans-serif;
+    margin: 4px 2px;
+    cursor: pointer;
+		width: 20%;
 }

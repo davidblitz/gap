@@ -1,112 +1,9 @@
-
-//==EditorTime====================================================
-var div = document.createElement("div");
-var myTextarea = document.createElement("textarea");
-var evalButton = document.createElement("button");
-evalButton.textContent = "Evaluate";
-myTextarea.name = "post";
-myTextarea.maxLength = "500";
-myTextarea.cols = "80";
-myTextarea.rows = "40";
-div.appendChild(myTextarea); //appendChild
-div.appendChild(evalButton)
-document.body.appendChild(div)
-
-  var editor = CodeMirror.fromTextArea(myTextarea, {
-    lineNumbers: true
-  });
-
-
-evalButton.onclick = (function evalFun() {
-  var code = editor.getValue()
-  var result = eval(code)
-  println("Result: " + result)
-})
-
-//--AlgoTime--
-
-var infinity = 100000
-
-function isTree() {
-  var N = vertices.length
-  var M = edges.length
-
-  if(M !=  N-1) return false
-
-  connectedVertices = []
-  edges.forEach(function (e, index, array) {
-    if(connectedVertices.indexOf(e[0]) < 0) {
-      connectedVertices.push(e[0])
-    }
-    if(connectedVertices.indexOf(e[1]) < 0) {
-      connectedVertices.push(e[1])
-    }
-  })
-  if(connectedVertices.length < N) return false
-  else return true
-}
-
-function constArray(n, value) {
-  return Array.apply(0, Array(n)).map(function (_, _) {return value})
-}
-
-function range(start, end) {
-  if(arguments.length == 1) {
-    end = start
-    start = 0
-  }
-  var n = Math.max(end - start, 0)
-
-  return Array.apply(0, Array(n)).map(function (_, i) {return start + i})
-}
-
-function edgeListToAdjacencyList() {
-  var N = vertices.length
-
-  var adjacencyList = constArray(N, [])
-
-  edges.forEach(function (e, index, array) {
-    adjacencyList[e[0]].push([e[0], e[1]])
-    adjacencyList[e[1]].push([e[1], e[0]])
-  })
-
-  return adjacencyList
-}
-
-function dijkstra() {
-  var N = vertices.length
-  var M = edges.length
-
-  var adjacencyList = edgeListToAdjacencyList()
-
-  var vertexQueue = range(N)
-  var distances = constArray(N, infinity)
-  var previousVertex = constArray(N, -1)
-
-  distances[focusIndex] = 0
-
-
-  while(vertexQueue.length > 0) {
-    var u = Math.min(distances)
-    var v = distances.indexOf(u)
-    var pos = vertexQueue.indexOf(v)
-    vertexQueue.splice(pos, 1)
-
-    adjacencyList[v].forEach(function (e, index, array) {
-      var alt = distances[v] + 1
-      if(alt < distances[e[1]]) {
-        distances[e[1]] = alt
-        previousVertex[e[1]] = v
-      }
-    })
-
-    return [distances, previous]
-  }
-
-  console.log(distances.toString())
-}
-
-//--CanvasTime-------------------------------------------------
+var backgroundColour = 200
+var vertexFill = 255
+var vertexStroke = 0
+var edgeColour = 255
+var focusColour = [0, 255, 0]
+var textColour = 0
 
 var printTupleArr = function () {
   arrString = this.name + " = ["
@@ -121,9 +18,6 @@ var printTupleArr = function () {
   return arrString
 }
 
-//var vertices = [[70, 120], [50, 50]]
-//var edges = [[[0, 1]]]
-
 var vertices = []
 vertices.name = "vertices"
 vertices.print = printTupleArr
@@ -132,22 +26,91 @@ var edges = []
 edges.name = "edges"
 edges.print = printTupleArr
 
+
+//==EditorTime====================================================
+var evalButton = document.getElementById("evalButton");
+var saveButton = document.getElementById("saveButton");
+var loadButton = document.getElementById("loadButton");
+
+var editor = CodeMirror(document.getElementById("editor"), {
+  mode:  "javascript",
+  lineNumbers: true
+});
+var outputText = document.getElementById("outputText")
+/*myTextarea.name = "post";
+myTextarea.maxLength = "500";
+myTextarea.cols = "80";
+myTextarea.rows = "40";
+div.appendChild(myTextarea); //appendChild
+div.appendChild(evalButton)
+document.body.appendChild(div)
+
+  var editor = CodeMirror.fromTextArea(myTextarea, {
+    lineNumbers: true
+  });
+
+*/
+evalButton.onclick = (function evalFun() {
+  var code = editor.getValue()
+  var result = eval(code)
+  outputText.innerHTML = "Result: " + result
+})
+
+saveButton.onclick = (function saveFun() {
+  var code = editor.getValue()
+  var file = new File([code], "graphEdit.js", {type: "text/plain;charset=utf-8"});
+  saveAs(file);
+})
+
+var openFile = function(event) {
+  var input = event.target;
+
+  var reader = new FileReader();
+  reader.onload = function(){
+    var text = reader.result;
+    editor.setValue(text);
+    var splitContent  = text.split('\n');
+    background(0);
+    vertices = eval(splitContent[0].split("=")[1])
+    vertices.print = printTupleArr
+    edges = eval(splitContent[1].split("=")[1])
+    edges.print = printTupleArr
+    eval(splitContent[1]);
+
+    focusIndex = 0
+
+    console.log("File loaded.");
+  };
+  reader.readAsText(input.files[0]);
+};
+
+//loadButton.onclick = ()
+//--CanvasTime-------------------------------------------------
+
+
+//var vertices = [[70, 120], [50, 50]]
+//var edges = [[[0, 1]]]
 var vertexRadius = 15
 var focusIndex = -1
 
 function draw_vertices() {
   vertices.forEach(function (v, index, array){
+    stroke(vertexStroke)
+    fill(vertexFill)
     if(focusIndex == index) fill(0, 255, 0)
     ellipse(v[0], v[1], vertexRadius, vertexRadius)
-    fill(255)
+    stroke(textColour)
+    fill(textColour)
+    text(index, v[0]+vertexRadius, v[1]+vertexRadius)
+
   })
 }
 
 function draw_edges() {
   edges.forEach(function (e, index, array) {
-    stroke(255)
+    stroke(edgeColour)
     line(vertices[e[0]][0], vertices[e[0]][1], vertices[e[1]][0], vertices[e[1]][1])
-    noStroke()
+    //noStroke()
   })
 }
 
@@ -193,7 +156,8 @@ function mouseClicked() {
   splitContent[1] = "var " + edges.print()
   var newEditorContent = splitContent.join("\n")
   editor.setValue(newEditorContent)
-  var treeBool = isTree()
+
+  /*var treeBool = isTree()
   println("isTree() = " + treeBool)
   if(treeBool) {
     ret = dijkstra()
@@ -204,17 +168,18 @@ function mouseClicked() {
       outString += ind + ":" +  d
       if(ind != array.length-1) outString += ", "
     })
-  }
+  }*/
   return false
 }
 
 function setup() {
-  createCanvas(600, 400)
-  background(0)
-  noStroke()
+  var canvas = createCanvas(600, 400)
+  canvas.parent('canvas')
+  background(backgroundColour)
 }
 
 function draw() {
+  background(backgroundColour)
   draw_vertices()
   draw_edges()
 }
