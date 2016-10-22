@@ -109,7 +109,15 @@ function draw_vertices() {
 function draw_edges() {
   edges.forEach(function (e, index, array) {
     stroke(edgeColour)
-    line(vertices[e[0]][0], vertices[e[0]][1], vertices[e[1]][0], vertices[e[1]][1])
+    var a = {x: vertices[e[0]][0], y: vertices[e[0]][1]}
+    var b = {x: vertices[e[1]][0], y: vertices[e[1]][1]}
+    var n = {x: b.y-a.y, y: a.x - b.x}
+    var controlPoint1 = {x: (3*a.x/4 + b.x/4 + n.x/3), y: (3*a.y/4 + b.y/4 + n.y/3)}
+    var controlPoint2 = {x: (3*b.x/4 + a.x/4 + n.x/3), y: (3*b.y/4 + a.y/4 + n.y/3)}
+
+    noFill()
+    //bezier(a.x, a.y, controlPoint1.x, controlPoint1.y, controlPoint2.x, controlPoint2.y, b.x, b.y)
+    line(a.x, a.y, b.x, b.y)
     //noStroke()
   })
 }

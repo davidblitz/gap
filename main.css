@@ -2,6 +2,7 @@
 	position: fixed;
 	left: 0px
 }
+
 #righthalf {
 	position: fixed;
 	top: 0px;
@@ -14,7 +15,7 @@ input[type=file] {
 	display: none;
 }
 
-input[type=eval], input[type=save], input[type=load], .custom-file-upload {
+input[type=eval], input[type=save], input[type], .custom-file-upload {
     background-color: #4CAF50;
     border: none;
     color: white;
